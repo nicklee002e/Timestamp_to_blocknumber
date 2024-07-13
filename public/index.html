@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timestamp to Block Number Converter</title>
+</head>
+<body>
+    <h1>Timestamp to Block Number Converter</h1>
+    <form id="timestampForm">
+        <div>
+            <label for="date1">Enter Date (yyyy.mm.dd):</label>
+            <input type="text" id="date1" name="date1" required>
+            <label for="time1">Enter Time (hh:mm:ss):</label>
+            <input type="text" id="time1" name="time1" required>
+        </div>
+        <div>
+            <label for="date2">Enter Date (yyyy.mm.dd):</label>
+            <input type="text" id="date2" name="date2">
+            <label for="time2">Enter Time (hh:mm:ss):</label>
+            <input type="text" id="time2" name="time2">
+        </div>
+        <div>
+            <label for="date3">Enter Date (yyyy.mm.dd):</label>
+            <input type="text" id="date3" name="date3">
+            <label for="time3">Enter Time (hh:mm:ss):</label>
+            <input type="text" id="time3" name="time3">
+        </div>
+        <div>
+            <label for="date4">Enter Date (yyyy.mm.dd):</label>
+            <input type="text" id="date4" name="date4">
+            <label for="time4">Enter Time (hh:mm:ss):</label>
+            <input type="text" id="time4" name="time4">
+        </div>
+        <button type="submit">Convert</button>
+    </form>
+    <p id="result"></p>
+
+    <script>
+        document.getElementById('timestampForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const dates = [];
+            const times = [];
+
+            for (let i = 1; i <= 4; i++) {
+                const date = document.getElementById(`date${i}`).value;
+                const time = document.getElementById(`time${i}`).value;
+
+                if (date && time) {
+                    dates.push(date);
+                    times.push(time);
+                }
+            }
+
+            const response = await fetch(`/api/block-number?dates=${dates.join(',')}&times=${times.join(',')}`);
+            const data = await response.json();
+
+            if (response.ok) {
+                const resultElement = document.getElementById('result');
+                resultElement.innerHTML = '';
+                data.forEach(entry => {
+                    resultElement.innerHTML += `Date: ${entry.date} Time: ${entry.time} -> Estimated Block Number: ${entry.targetBlockNumber}<br>`;
+                });
+            } else {
+                document.getElementById('result').textContent = `Error: ${data.error}`;
+            }
+        });
+    </script>
+</body>
+</html>
